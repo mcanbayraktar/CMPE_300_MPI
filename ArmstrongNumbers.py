@@ -16,15 +16,17 @@ if rank == 0:
 	random.shuffle(L)
 	for i in range(workers):
 		chunk = L[:chunkSize]
-		msg = comm.isend(chunk, dest=i+1)
-		msg.wait()
-		L = L[chunkSize:len(L)]	# Updates list by deleting the first 5 elements
-		armsFromWorker = comm.irecv()
-		armsFromWorker.wait()
+		#msg = comm.isend(chunk, dest=i+1)
+		#msg.wait()
+		msg = comm.send(chunk, dest=i+1)
+		L = L[chunkSize:len(L)]	# Updates list by deleting the first chunkSize elements
+		#armsFromWorker = comm.irecv()
+		#armsFromWorker.wait()
+		armsFromWorker = comm.recv()
 		arms.extend(armsFromWorker)
-		if i == workers-1:
-			totalSum = int(comm.irecv())
-			totalSum.wait()
+		#if i == workers-1:
+		#	totalSum = int(comm.irecv())
+		#	totalSum.wait()
 	arms.sort()
 	txt = open('armstrong.txt','w')
 	for i in range(len(arms)):
@@ -32,8 +34,9 @@ if rank == 0:
 	txt.close()
 	print("Total Sum = %i" %sum(arms))
 else:
-	incoming = comm.irecv()
-	incoming.wait()
+	#incoming = comm.irecv()
+	#incoming.wait()
+	incoming = comm.recv()
 	armstrongsOfThisWorker = []
 	for i in range(chunkSize):
 		ifArmstrong = 0
@@ -43,7 +46,7 @@ else:
 			count += 1
 			digitFinder= int(digitFinder / 10)
 		number = incoming[i]
-		for j in range(count):	#Takes every digits power of digit count
+		for j in range(count):	#Takes every digit's power of digit count
 			ifArmstrong += (number % 10) ** count
 			number = int(number / 10)
 		if incoming[i] == ifArmstrong:
@@ -52,18 +55,17 @@ else:
 	print("Armstrong numbers in this worker = " + str(armstrongsOfThisWorker))
 	print("Sum of Armstrong numbers in Worker " + str(rank) + " = " + str(sum(armstrongsOfThisWorker)))
 
-	sumAtThisWorker = sum(armstrongsOfThisWorker)
-	if rank != 1:
-		sumFromPreviousWorker = int(comm.irecv())
-		sumFromPreviousWorker.wait()
-		sumAtThisWorker += sumFromPreviousWorker
-		msg = comm.isend(sumAtThisWorker, dest=(rank+1)%size)
-		msg.wait()
-	else:
-		msg = comm.isend(sumAtThisWorker, dest=2) 
-		msg.wait()
+	# sumAtThisWorker = sum(armstrongsOfThisWorker)
+	# if rank != 1:
+	# 	sumFromPreviousWorker = int(comm.irecv())
+	# 	sumFromPreviousWorker.wait()
+	# 	sumAtThisWorker += sumFromPreviousWorker
+	# 	msg = comm.isend(sumAtThisWorker, dest=(rank+1)%size)
+	# 	msg.wait()
+	# else:
+	# 	msg = comm.isend(sumAtThisWorker, dest=2) 
+	# 	msg.wait()
 
-print("Hello, its me!")
 
 '''
 if rank == 0:
