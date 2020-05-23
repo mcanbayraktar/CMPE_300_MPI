@@ -60,10 +60,11 @@ else:
 		msg = comm.isend(sumAtThisWorker, dest=(rank+1)%size)
 		msg.wait()
 	else:
-		msg = comm.isend(sumAtThisWorker, dest=2)
+		msg = comm.isend(sumAtThisWorker, dest=2) 
 		msg.wait()
 
 
+print("Hello, its me!")
 
 '''
 if rank == 0:
@@ -73,8 +74,6 @@ else:
 	if rank + 1 < size:
 		comm.send()
 '''
-
-
 
 
 	#print(armstrongsOfThisWorker)
