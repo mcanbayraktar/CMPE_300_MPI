@@ -75,8 +75,6 @@ else:
 '''
 
 
-
-
 	#print(armstrongsOfThisWorker)
 	#sumFromPreviousWorker = comm.recv()
 	#sumOfArms = sumFromPreviousWorker + sum(armstrongsOfThisWorker)
