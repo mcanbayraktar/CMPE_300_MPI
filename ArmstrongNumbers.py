@@ -63,7 +63,7 @@ else:
 		msg = comm.isend(sumAtThisWorker, dest=2)
 		msg.wait()
 
-
+print("Hello, its me!")
 
 '''
 if rank == 0:
